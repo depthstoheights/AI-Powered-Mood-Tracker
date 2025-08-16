@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Tracker - Depths to Heights</title>
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiTW9vZCBUcmFja2VyIC0gRGVwdGhzIHRvIEhlaWdodHMiLCJzaG9ydF9uYW1lIjoiTW9vZCBUcmFja2VyIiwic3RhcnRfdXJsIjoiLiIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiNmNGY3ZmEiLCJ0aGVtZV9jb2xvciI6IiM2NjdlZWEiLCJpY29ucyI6W3sic3JjIjoiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCM2FXUjBhRDBpTVRJNElpQm9aV2xuYUhROUlqRXlPQ0lpSUhacFpYZENiM2c5SWpBZ01DQXhNamdnTVRJNElpQjRiV3h1Y3owaWFIUjBjRG92TDNkM2R5NTNNeTV2Y21jdk1qQXdNQzl6ZG1jaVBnbzhZMmx5WTJ4bElHTjRQU0kyTkNJZ1kzazlJalk0SWlCeVBTSXlOQ0lnWm1sc2JEMGlJelkyTjJWbFlTSXZQZ284ZEdWNGRDQjRQU0kyTkNJZ2VUMGlOemNpSUhSbGVIUXRZVzVqYUc5eVBTSnRhV1JrYkdVaUlHWnZiblF0YzJsNlpUMGlNVFlpSUdacGJHdzlJaU5tWm1aaVptWWlQalU4TDNSbGVIUStQQzl6ZG1jKyIsInNpemVzIjoiMTI4eDEyOCIsInR5cGUiOiJpbWFnZS9zdmcreG1sIn1dfQ==">
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --accent-color: #4ecdc4;
+            --text-color: #2c3e50;
+            --light-text: #7f8c8d;
+            --background: #f4f7fa;
+            --white: #ffffff;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --shadow: 0 4px 20px rgba(0,0,0,0.1);
+            --border-radius: 12px;
+            --transition: all 0.25s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            min-height: 100vh;
+            color: var(--text-color);
+            line-height: 1.6;
+            font-size: 16px;
+        }
+
+        body.dyslexia-friendly {
+            font-family: 'Arial', sans-serif;
+            letter-spacing: 0.12em;
+            word-spacing: 0.16em;
+            line-height: 1.8;
+        }
+
+        body.high-contrast {
+            --primary-color: #000080;
+            --secondary-color: #000040;
+            --text-color: #000000;
+            --background: #ffffff;
+            --white: #f0f0f0;
+        }
+
+        body.large-text {
+            font-size: 20px;
+        }
+
+        body.extra-large-text {
+            font-size: 24px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .floating-heart {
+            position: absolute;
+            color: rgba(255,255,255,0.3);
+            font-size: 2rem;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-heart:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
+        .floating-heart:nth-child(2) { top: 20%; right: 15%; animation-delay: 2s; }
+        .floating-heart:nth-child(3) { bottom: 10%; left: 20%; animation-delay: 4s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .accessibility-bar {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .accessibility-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .accessibility-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-1px);
+        }
+
+        .accessibility-btn.active {
+            background: var(--accent-color);
+        }
+
+        .main-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin-bottom: 20px;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .card-header h2 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .card-content {
+            padding: 30px;
+        }
+
+        .mood-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .mood-item {
+            background: var(--background);
+            border: 3px solid transparent;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mood-item:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+
+        .mood-item.selected {
+            border-color: var(--primary-color);
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .mood-emoji {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .mood-label {
+            font-weight: bold;
+            color: var(--text-color);
+            margin-bottom: 5px;
+        }
+
+        .mood-description {
+            font-size: 0.9rem;
+            color: var(--light-text);
+        }
+
+        .intensity-slider {
+            margin: 25px 0;
+        }
+
+        .intensity-slider label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .slider-container {
+            position: relative;
+            margin: 20px 0;
+        }
+
+        .intensity-range {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: var(--background);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .intensity-range::-webkit-slider-thumb {
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .intensity-range::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: var(--light-text);
+        }
+
+        .journal-section {
+            margin: 30px 0;
+        }
+
+        .journal-textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 20px;
+            border: 2px solid var(--background);
+            border-radius: var(--border-radius);
+            font-family: inherit;
+            font-size: 1rem;
+            resize: vertical;
+            transition: var(--transition);
+        }
+
+        .journal-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: var(--border-radius);
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .insights-section {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .insights-section.show {
+            display: block;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .insight-card {
+            background: var(--background);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .insight-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .verse-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin: 20px 0;
+            text-align: center;
+            border-left: 4px solid var(--success);
+        }
+
+        .verse-text {
+            font-size: 1.2rem;
+            font-style: italic;
+            color: var(--text-color);
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+
+        .verse-reference {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .coping-strategies {
+            display: grid;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .strategy-item {
+            background: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            border-left: 3px solid var(--warning);
+            transition: var(--transition);
+        }
+
+        .strategy-item:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow);
+        }
+
+        .strategy-title {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        .crisis-support {
+            background: linear-gradient(135deg, #fee, #fdd);
+            border: 2px solid var(--danger);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .crisis-support h3 {
+            color: var(--danger);
+            margin-bottom: 10px;
+        }
+
+        .emergency-number {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--danger);
+            margin: 10px 0;
+        }
+
+        .share-btn {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: var(--transition);
+        }
+
+        .share-btn:hover {
+            transform: translateY(-1px);
+            opacity: 0.9;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            padding: 30px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            line-height: 1.8;
+        }
+
+        .footer a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .disclaimer {
+            background: rgba(255,255,255,0.1);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin: 20px 0;
+            color: white;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .mood-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .accessibility-bar {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Smooth transitions for all interactive elements */
+        button, .mood-item, .strategy-item {
+            transition: var(--transition);
+        }
+
+        /* Focus styles for accessibility */
+        button:focus, .mood-item:focus, .journal-textarea:focus {
+            outline: 3px solid var(--accent-color);
+            outline-offset: 2px;
+        }
+
+        /* Hidden but accessible text for screen readers */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="floating-heart">💙</div>
+            <div class="floating-heart">🕊️</div>
+            <div class="floating-heart">✨</div>
+            <h1>Daily Mood & Spiritual Wellness</h1>
+            <p>Track your emotions, receive personalized insights, and find hope in every season</p>
+        </header>
+
+        <div class="accessibility-bar">
+            <button class="accessibility-btn" onclick="toggleDyslexiaFont()" id="dyslexiaBtn">
+                📖 Dyslexia-Friendly Font
+            </button>
+            <button class="accessibility-btn" onclick="toggleHighContrast()" id="contrastBtn">
+                🎨 High Contrast
+            </button>
+            <button class="accessibility-btn" onclick="increaseTextSize()" id="textSizeBtn">
+                🔍 Text Size: Normal
+            </button>
+        </div>
+
+        <div class="disclaimer">
+            <strong>Important:</strong> This tool provides spiritual encouragement and wellness insights, not medical or professional mental health advice. If you're experiencing a crisis, please reach out to emergency services or a mental health professional.
+        </div>
+
+        <main class="main-card">
+            <div class="card-header">
+                <h2>How are you feeling today?</h2>
+                <p>Take a moment to check in with your heart and mind</p>
+            </div>
+            
+            <div class="card-content">
+                <div class="mood-grid">
+                    <div class="mood-item" data-mood="joyful" tabindex="0" role="button" aria-label="Select joyful mood">
+                        <span class="mood-emoji">😊</span>
+                        <div class="mood-label">Joyful</div>
+                        <div class="mood-description">Happy, content, grateful</div>
+                    </div>
+                    
+                    <div class="mood-item" data-mood="peaceful" tabindex="0" role="button" aria-label="Select peaceful mood">
+                        <span class="mood-emoji">😌</span>
+                        <div class="mood-label">Peaceful</div>
+                        <div class="mood-description">Calm, serene, centered</div>
+                    </div>
+                    
+                    <div class="mood-item" data-mood="hopeful" tabindex="0" role="button" aria-label="Select hopeful mood">
+                        <span class="mood-emoji">🌅</span>
+                        <div class="mood-label">Hopeful</div>
+                        <div class="mood-description">Optimistic, trusting, expectant</div>
+                    </div>
+                    
+                    <div class="mood-item" data-mood="anxious" tabindex="0" role="button" aria-label="Select anxious mood">
+                        <span class="mood-emoji">😰</span>
+                        <div class="mood-label">Anxious</div>
+                        <div class="mood-description">Worried, stressed, uncertain</div>
+                    </div>
+                    
+                    <div class="mood-item" data-mood="overwhelmed" tabindex="0" role="button" aria-label="Select overwhelmed mood">
+                        <span class="mood-emoji">😵</span>
+                        <div class="mood-label">Overwhelmed</div>
+                        <div class="mood-description">Too much, scattered, exhausted</div>
+                    </div>
+                    
+                    <div class="mood-item" data-mood="sad" tabindex="0" role="button" aria-label="Select sad mood">
+                        <span class="mood-emoji">😢</span>
+                        <div class="mood-label">Having Heavy Days</div>
+                        <div class="mood-description">Sad, grieving, low energy</div>
+                    </div>
+                    
+                    <div class="mood-item" data-mood="lonely" tabindex="0" role="button" aria-label="Select lonely mood">
+                        <span class="mood-emoji">😔</span>
+                        <div class="mood-label">Lonely</div>
+                        <div class="mood-description">Isolated, disconnected, longing</div>
+                    </div>
+                    
+                    <div class="mood-item" data-mood="grateful" tabindex="0" role="button" aria-label="Select grateful mood">
+                        <span class="mood-emoji">🙏</span>
+                        <div class="mood-label">Grateful</div>
+                        <div class="mood-description">Thankful, blessed, appreciative</div>
+                    </div>
+                </div>
+
+                <div class="intensity-slider">
+                    <label for="intensityRange">How intense is this feeling? (1 = mild, 10 = very strong)</label>
+                    <div class="slider-container">
+                        <input type="range" id="intensityRange" class="intensity-range" min="1" max="10" value="5" aria-label="Emotion intensity level">
+                        <div class="slider-labels">
+                            <span>Mild (1)</span>
+                            <span>Moderate (5)</span>
+                            <span>Very Strong (10)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="journal-section">
+                    <label for="journalEntry">
+                        <strong>What's on your heart today?</strong> (Take your time - no rush)
+                    </label>
+                    <textarea 
+                        id="journalEntry" 
+                        class="journal-textarea" 
+                        placeholder="Share whatever you'd like... your thoughts, prayers, struggles, victories, or anything else on your mind. This is your safe space for reflection."
+                        aria-label="Journal entry text area"></textarea>
+                </div>
+
+                <button class="submit-btn" onclick="submitMoodEntry()" id="submitBtn">
+                    <span id="submitText">Receive Your Personalized Insights</span>
+                    <span id="submitLoading" class="loading" style="display: none;"></span>
+                </button>
+            </div>
+        </main>
+
+        <div class="insights-section" id="insightsSection">
+            <div class="main-card">
+                <div class="card-header">
+                    <h2>Your Personalized Insights</h2>
+                    <p>Gentle wisdom and encouragement for your current season</p>
+                </div>
+                
+                <div class="card-content">
+                    <div id="verseSection" class="verse-card">
+                        <!-- Verse will be inserted here -->
+                    </div>
+
+                    <div class="insight-card">
+                        <div class="insight-title">
+                            <span>🤖</span> AI Pattern Analysis
+                        </div>
+                        <div id="aiInsights">
+                            <!-- AI insights will be inserted here -->
+                        </div>
+                    </div>
+
+                    <div class="insight-card">
+                        <div class="insight-title">
+                            <span>🛠️</span> Personalized Coping Strategies
+                        </div>
+                        <div class="coping-strategies" id="copingStrategies">
+                            <!-- Coping strategies will be inserted here -->
+                        </div>
+                    </div>
+
+                    <div class="insight-card">
+                        <div class="insight-title">
+                            <span>💭</span> Reflection Prompts
+                        </div>
+                        <div id="reflectionPrompts">
+                            <!-- Reflection prompts will be inserted here -->
+                        </div>
+                    </div>
+
+                    <div class="crisis-support" id="crisisSupport" style="display: none;">
+                        <h3>🆘 You're Not Alone - Crisis Support</h3>
+                        <p>If you're experiencing thoughts of self-harm or suicide, please reach out immediately:</p>
+                        <div class="emergency-number">🇺🇸 Call or Text 988 (Suicide & Crisis Lifeline)</div>
+                        <p>Outside the US: Use your local emergency number</p>
+                        <p><strong>Remember:</strong> You matter, you are loved, and help is available. These difficult feelings will pass.</p>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 30px;">
+                        <button class="share-btn" onclick="shareInsights()" id="shareBtn">
+                            📤 Share Your Journey
+                        </button>
+                        <button class="submit-btn" onclick="resetForNewEntry()" style="width: auto; margin-top: 10px;">
+                            📝 New Entry
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p><strong>Free to use.</strong> If this encouraged you, feel free to <a href="https://www.paypal.com/donate/?hosted_button_id=8GRE7B8C3TP2U" target="_blank">buy me a coffee</a>.</p>
+            <br>
+            <p><strong>Depths to Heights</strong></p>
+            <p><a href="https://depthstoheights.org" target="_blank">depthstoheights.org</a></p>
+            <p><a href="mailto:depthstoheights@gmail.com">depthstoheights@gmail.com</a></p>
+            <p><strong>Made by Justin</strong></p>
+        </footer>
+    </div>
+
+    <script>
+        // Store mood entries locally
+        let moodHistory = JSON.parse(localStorage.getItem('moodHistory') || '[]');
+        let selectedMood = null;
+        let textSizeLevel = 0; // 0: normal, 1: large, 2: extra-large
+
+        // Biblical verses database organized by mood
+        const verseDatabase = {
+            anxious: [
+                {
+                    text: "Do not be anxious about anything, but in every situation, by prayer and petition, with thanksgiving, present your requests to God. And the peace of God, which transcends all understanding, will guard your hearts and your minds in Christ Jesus.",
+                    reference: "Philippians 4:6-7",
+                    context: "Paul wrote this while imprisoned, teaching the Philippian church about finding peace through prayer and trust in God's sovereignty."
+                },
+                {
+                    text: "Cast all your anxiety on him because he cares for you.",
+                    reference: "1 Peter 5:7",
+                    context: "Peter encourages believers to transfer their worries to God, emphasizing His loving care for His people."
+                }
+            ],
+            overwhelmed: [
+                {
+                    text: "Come to me, all you who are weary and burdened, and I will give you rest. Take my yoke upon you and learn from me, for I am gentle and humble in heart, and you will find rest for your souls.",
+                    reference: "Matthew 11:28-29",
+                    context: "Jesus offers this invitation to those feeling overwhelmed by life's burdens, promising His gentle guidance and soul-deep rest."
+                },
+                {
+                    text: "The Lord your God is with you, the Mighty Warrior who saves. He will take great delight in you; in his love he will no longer rebuke you, but will rejoice over you with singing.",
+                    reference: "Zephaniah 3:17",
+                    context: "A beautiful promise of God's presence and joy over His people, even in difficult times."
+                }
+            ],
+            sad: [
+                {
+                    text: "The Lord is close to the brokenhearted and saves those who are crushed in spirit.",
+                    reference: "Psalm 34:18",
+                    context: "David writes from personal experience of pain, affirming God's special nearness to those who are hurting."
+                },
+                {
+                    text: "Weeping may stay for the night, but rejoicing comes in the morning.",
+                    reference: "Psalm 30:5",
+                    context: "A reminder that sorrow is temporary, and God brings renewal and joy in His timing."
+                }
+            ],
+            lonely: [
+                {
+                    text: "Never will I leave you; never will I forsake you.",
+                    reference: "Hebrews 13:5",
+                    context: "This promise, echoing God's words to Joshua, assures believers of His constant presence and faithfulness."
+                },
+                {
+                    text: "Turn to me and be gracious to me, for I am lonely and afflicted.",
+                    reference: "Psalm 25:16",
+                    context: "David's honest prayer shows that even great leaders experienced loneliness and found comfort in God's grace."
+                }
+            ],
+            joyful: [
+                {
+                    text: "This is the day the Lord has made; we will rejoice and be glad in it.",
+                    reference: "Psalm 118:24",
+                    context: "A celebration of God's gift of each new day and an encouragement to find joy in His provisions."
+                },
+                {
+                    text: "Rejoice in the Lord always. I will say it again: Rejoice!",
+                    reference: "Philippians 4:4",
+                    context: "Paul's exhortation to constant joy, written from prison, shows that true joy comes from our relationship with God, not circumstances."
+                }
+            ],
+            peaceful: [
+                {
+                    text: "You will keep in perfect peace those whose minds are steadfast, because they trust in you.",
+                    reference: "Isaiah 26:3",
+                    context: "Isaiah describes the peace that comes from unwavering trust in God's character and promises."
+                },
+                {
+                    text: "Peace I leave with you; my peace I give you. I do not give to you as the world gives. Do not let your hearts be troubled and do not be afraid.",
+                    reference: "John 14:27",
+                    context: "Jesus' promise of supernatural peace to His disciples before His crucifixion, offering lasting tranquility beyond worldly understanding."
+                }
+            ],
+            hopeful: [
+                {
+                    text: "For I know the plans I have for you, declares the Lord, plans to prosper you and not to harm you, to give you hope and a future.",
+                    reference: "Jeremiah 29:11",
+                    context: "God's promise to the exiled Israelites in Babylon, revealing His heart to give hope even in dark seasons."
+                },
+                {
+                    text: "May the God of hope fill you with all joy and peace as you trust in him, so that you may overflow with hope by the power of the Holy Spirit.",
+                    reference: "Romans 15:13",
+                    context: "Paul's prayer for believers, connecting hope with trust and the Spirit's power to sustain us."
+                }
+            ],
+            grateful: [
+                {
+                    text: "Give thanks in all circumstances; for this is God's will for you in Christ Jesus.",
+                    reference: "1 Thessalonians 5:18",
+                    context: "Paul instructs believers to maintain grateful hearts regardless of circumstances, seeing gratitude as God's desire for His people."
+                },
+                {
+                    text: "Every good and perfect gift is from above, coming down from the Father of the heavenly lights, who does not change like shifting shadows.",
+                    reference: "James 1:17",
+                    context: "James reminds us that all good things ultimately come from God's unchanging nature and generous heart."
+                }
+            ]
+        };
+
+        // Initialize mood tracking
+        function initializeMoodTracker() {
+            // Add click handlers for mood items
+            document.querySelectorAll('.mood-item').forEach(item => {
+                item.addEventListener('click', selectMood);
+                item.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        selectMood.call(this);
+                    }
+                });
+            });
+
+            // Load saved accessibility preferences
+            loadAccessibilityPreferences();
+        }
+
+        function selectMood() {
+            // Remove previous selection
+            document.querySelectorAll('.mood-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            
+            // Select current mood
+            this.classList.add('selected');
+            selectedMood = this.dataset.mood;
+            
+            // Announce selection for screen readers
+            this.setAttribute('aria-selected', 'true');
+        }
+
+        async function submitMoodEntry() {
+            if (!selectedMood) {
+                alert('Please select how you\'re feeling today.');
+                return;
+            }
+
+            const intensity = document.getElementById('intensityRange').value;
+            const journalEntry = document.getElementById('journalEntry').value.trim();
+
+            // Show loading state
+            const submitBtn = document.getElementById('submitBtn');
+            const submitText = document.getElementById('submitText');
+            const submitLoading = document.getElementById('submitLoading');
+            
+            submitBtn.disabled = true;
+            submitText.style.display = 'none';
+            submitLoading.style.display = 'inline-block';
+
+            try {
+                // Simulate AI processing time for better UX
+                await new Promise(resolve => setTimeout(resolve, 1500));
+
+                // Store the mood entry
+                const moodEntry = {
+                    date: new Date().toISOString(),
+                    mood: selectedMood,
+                    intensity: parseInt(intensity),
+                    journal: journalEntry,
+                    timestamp: Date.now()
+                };
+
+                moodHistory.push(moodEntry);
+                localStorage.setItem('moodHistory', JSON.stringify(moodHistory));
+
+                // Generate insights
+                generatePersonalizedInsights(moodEntry);
+
+                // Show insights section
+                document.getElementById('insightsSection').classList.add('show');
+                
+                // Scroll to insights
+                document.getElementById('insightsSection').scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+
+            } catch (error) {
+                console.error('Error processing mood entry:', error);
+                alert('There was an error processing your entry. Please try again.');
+            } finally {
+                // Reset button state
+                submitBtn.disabled = false;
+                submitText.style.display = 'inline';
+                submitLoading.style.display = 'none';
+            }
+        }
+
+        function generatePersonalizedInsights(currentEntry) {
+            // Generate verse
+            generateVerse(currentEntry.mood);
+            
+            // Generate AI insights
+            generateAIInsights(currentEntry);
+            
+            // Generate coping strategies
+            generateCopingStrategies(currentEntry.mood, currentEntry.intensity);
+            
+            // Generate reflection prompts
+            generateReflectionPrompts(currentEntry.mood, currentEntry.journal);
+            
+            // Show crisis support if needed
+            checkForCrisisSupport(currentEntry);
+        }
+
+        function generateVerse(mood) {
+            const verses = verseDatabase[mood] || verseDatabase.peaceful;
+            const selectedVerse = verses[Math.floor(Math.random() * verses.length)];
+            
+            const verseSection = document.getElementById('verseSection');
+            verseSection.innerHTML = `
+                <div class="verse-text">"${selectedVerse.text}"</div>
+                <div class="verse-reference">— ${selectedVerse.reference}</div>
+                <div style="margin-top: 15px; font-size: 0.9rem; color: #666; font-style: italic;">
+                    Historical Context: ${selectedVerse.context}
+                </div>
+            `;
+        }
+
+        function generateAIInsights(entry) {
+            const insights = analyzePatterns(entry);
+            const aiInsightsContainer = document.getElementById('aiInsights');
+            
+            aiInsightsContainer.innerHTML = `
+                <p><strong>Pattern Analysis:</strong> ${insights.pattern}</p>
+                <p><strong>Emotional Trends:</strong> ${insights.trends}</p>
+                <p><strong>Encouragement:</strong> ${insights.encouragement}</p>
+            `;
+        }
+
+        function analyzePatterns(entry) {
+            const recentEntries = moodHistory.slice(-7); // Last 7 entries
+            const currentMood = entry.mood;
+            const intensity = entry.intensity;
+
+            let pattern = '';
+            let trends = '';
+            let encouragement = '';
+
+            // Analyze recent patterns
+            if (recentEntries.length > 1) {
+                const moodCounts = recentEntries.reduce((acc, e) => {
+                    acc[e.mood] = (acc[e.mood] || 0) + 1;
+                    return acc;
+                }, {});
+
+                const dominantMood = Object.keys(moodCounts).reduce((a, b) => 
+                    moodCounts[a] > moodCounts[b] ? a : b
+                );
+
+                pattern = `Based on your recent entries, you've been experiencing ${dominantMood} feelings most frequently. `;
+            } else {
+                pattern = 'This is one of your first entries. ';
+            }
+
+            // Intensity analysis
+            if (intensity <= 3) {
+                trends = 'Your emotional intensity today is on the gentler side, which can be a good time for reflection and gratitude.';
+            } else if (intensity <= 6) {
+                trends = 'You\'re experiencing moderate emotional intensity, which is very normal and manageable.';
+            } else {
+                trends = 'Your emotions feel quite intense today. Remember that strong feelings are temporary and will pass.';
+            }
+
+            // Mood-specific encouragement
+            const encouragements = {
+                anxious: 'Remember that anxiety often comes from focusing on unknowns. God invites you to cast these worries on Him.',
+                overwhelmed: 'When life feels like too much, it\'s okay to take things one moment at a time. You don\'t have to carry everything alone.',
+                sad: 'Heavy days are part of the human experience. Your feelings are valid, and this season will not last forever.',
+                lonely: 'Loneliness can feel isolating, but you are never truly alone. God sees you and cares deeply about your heart.',
+                joyful: 'What a gift to experience joy! This is a beautiful reminder of God\'s goodness and the light He brings to our lives.',
+                peaceful: 'Peace is such a precious gift. Savor this feeling and let it remind you of God\'s presence and care.',
+                hopeful: 'Hope is like sunlight breaking through clouds. Hold onto this feeling - it\'s a glimpse of the good things God has in store.',
+                grateful: 'Gratitude transforms our perspective and draws our hearts closer to God. Your thankful spirit is beautiful.'
+            };
+
+            encouragement = encouragements[currentMood] || 'Every emotion you experience is part of your unique journey. God walks with you through all of it.';
+
+            return { pattern, trends, encouragement };
+        }
+
+        function generateCopingStrategies(mood, intensity) {
+            const strategies = {
+                anxious: [
+                    { title: '🫁 Breath Prayer', description: 'Breathe in slowly while thinking "God is with me," breathe out thinking "I release my worries to Him."' },
+                    { title: '📖 Scripture Meditation', description: 'Choose one calming verse and repeat it slowly, letting each word sink into your heart.' },
+                    { title: '🚶 Mindful Walking', description: 'Take a slow walk while noticing God\'s creation around you - the sky, trees, or even small details.' },
+                    { title: '📝 Worry List Prayer', description: 'Write down your worries, then pray over each one and mentally hand them to God.' }
+                ],
+                overwhelmed: [
+                    { title: '🎯 One Thing Focus', description: 'Choose just one small task and focus only on that. Let everything else wait.' },
+                    { title: '🛑 Sacred Pause', description: 'Stop everything for 5 minutes. Sit quietly and remind yourself: "I am held by God."' },
+                    { title: '📱 Digital Sabbath', description: 'Take a break from screens and social media. Give your mind space to rest.' },
+                    { title: '🤲 Release Prayer', description: 'Physically open your hands and pray: "God, I release what I cannot control to You."' }
+                ],
+                sad: [
+                    { title: '😢 Honor Your Tears', description: 'Let yourself cry if you need to. Tears can be a form of prayer and emotional release.' },
+                    { title: '🎵 Worship Music', description: 'Listen to gentle worship songs that acknowledge pain but point toward hope.' },
+                    { title: '🌱 Gentle Self-Care', description: 'Do something kind for your body - a warm bath, soft blanket, or nourishing meal.' },
+                    { title: '💌 Encouragement Notes', description: 'Write yourself a kind note as if you were comforting a dear friend.' }
+                ],
+                lonely: [
+                    { title: '☕ Community Connection', description: 'Reach out to one person - even a simple text saying "thinking of you" can open doors.' },
+                    { title: '🙏 Prayer Community', description: 'Join online prayer groups or ask friends to pray with you virtually.' },
+                    { title: '📚 Biblical Companionship', description: 'Read stories of biblical figures who felt lonely - you\'re in good company.' },
+                    { title: '🤝 Service to Others', description: 'Sometimes helping others can ease our own loneliness while making a difference.' }
+                ],
+                joyful: [
+                    { title: '📓 Gratitude Journal', description: 'Write down specific things you\'re grateful for while this joy is fresh in your heart.' },
+                    { title: '📸 Joy Documentation', description: 'Take photos or write about this moment to remember God\'s goodness in harder times.' },
+                    { title: '🎉 Share the Joy', description: 'Tell someone about what\'s making you happy - joy multiplies when shared.' },
+                    { title: '🎵 Praise Music', description: 'Listen to or sing songs of worship and thanksgiving to celebrate God\'s goodness.' }
+                ],
+                peaceful: [
+                    { title: '🧘 Extended Quiet Time', description: 'Sit in silence for longer than usual, simply enjoying God\'s presence without agenda.' },
+                    { title: '🌅 Sunrise/Sunset Prayer', description: 'Watch the sky change colors while talking with God about your day.' },
+                    { title: '💭 Peaceful Reflection', description: 'Journal about what brought you this peace and how you can nurture it.' },
+                    { title: '🕯️ Contemplative Reading', description: 'Read slowly through a Psalm, letting each word settle in your spirit.' }
+                ],
+                hopeful: [
+                    { title: '🎯 Vision Journaling', description: 'Write about the good things you sense God might be preparing in your life.' },
+                    { title: '🌱 Plant Something', description: 'Plant seeds or tend to plants as a symbol of the growth happening in your life.' },
+                    { title: '📮 Future Letter', description: 'Write an encouraging letter to your future self for when hope feels harder to find.' },
+                    { title: '🌟 Hope Sharing', description: 'Share your sense of hope with someone who might need encouragement today.' }
+                ],
+                grateful: [
+                    { title: '📋 Gratitude Lists', description: 'Make lists of things you\'re grateful for - big and small, obvious and overlooked.' },
+                    { title: '💌 Thank You Notes', description: 'Write thank you notes to people who have impacted your life, even if you don\'t send them.' },
+                    { title: '🎁 Blessing Others', description: 'Look for ways to bless others as an expression of your grateful heart.' },
+                    { title: '🙏 Gratitude Prayer Walk', description: 'Take a walk while thanking God for everything you notice and remember.' }
+                ]
+            };
+
+            const moodStrategies = strategies[mood] || strategies.peaceful;
+            const selectedStrategies = intensity > 6 ? moodStrategies : moodStrategies.slice(0, 3);
+
+            const strategiesContainer = document.getElementById('copingStrategies');
+            strategiesContainer.innerHTML = selectedStrategies.map(strategy => `
+                <div class="strategy-item">
+                    <div class="strategy-title">${strategy.title}</div>
+                    <div>${strategy.description}</div>
+                </div>
+            `).join('');
+        }
+
+        function generateReflectionPrompts(mood, journalEntry) {
+            const prompts = {
+                anxious: [
+                    'What specific worries are weighing on your heart today? Try writing them down and then praying over each one.',
+                    'When you feel anxious, what helps you remember God\'s faithfulness in the past?',
+                    'What would it look like to trust God with this anxiety, even if the circumstances don\'t change?'
+                ],
+                overwhelmed: [
+                    'What are the most essential things on your plate right now? What might God be asking you to release?',
+                    'Where do you see God\'s presence even in the midst of this overwhelming season?',
+                    'What would it mean to rest in God\'s strength rather than relying only on your own?'
+                ],
+                sad: [
+                    'What losses or disappointments are you grieving right now? How might God be present in your sorrow?',
+                    'What would you say to a friend going through what you\'re experiencing?',
+                    'Even in sadness, where do you catch glimpses of hope or beauty?'
+                ],
+                lonely: [
+                    'What does your heart most long for in terms of connection and community?',
+                    'How might God be inviting you to reach out or be reached by others?',
+                    'What are some ways you\'ve felt God\'s presence even when human companionship felt distant?'
+                ],
+                joyful: [
+                    'What specific blessings or moments are bringing you joy today?',
+                    'How has God\'s goodness been evident in your life recently?',
+                    'Who could you share this joy with, and how might it encourage them?'
+                ],
+                peaceful: [
+                    'What has contributed to this sense of peace in your life?',
+                    'How can you protect and nurture this peaceful feeling?',
+                    'What would you like to remember about this moment for times when peace feels more elusive?'
+                ],
+                hopeful: [
+                    'What is stirring this sense of hope in your heart?',
+                    'What dreams or possibilities is God placing before you?',
+                    'How might this hope sustain you through any challenges ahead?'
+                ],
+                grateful: [
+                    'What are you most thankful for in this season of life?',
+                    'How has God\'s provision been evident in both big and small ways?',
+                    'How might your gratitude influence your perspective on current challenges?'
+                ]
+            };
+
+            const moodPrompts = prompts[mood] || prompts.peaceful;
+            const selectedPrompts = moodPrompts.slice(0, 2);
+
+            const promptsContainer = document.getElementById('reflectionPrompts');
+            promptsContainer.innerHTML = selectedPrompts.map((prompt, index) => `
+                <div style="margin-bottom: 20px;">
+                    <p><strong>Question ${index + 1}:</strong> ${prompt}</p>
+                    <textarea 
+                        placeholder="Take your time reflecting on this question... no rush."
+                        style="width: 100%; min-height: 80px; padding: 15px; margin-top: 10px; border: 2px solid #e0e0e0; border-radius: 8px; font-family: inherit;"
+                        aria-label="Reflection response for question ${index + 1}"></textarea>
+                </div>
+            `).join('');
+        }
+
+        function checkForCrisisSupport(entry) {
+            const crisisKeywords = ['suicide', 'kill myself', 'end it all', 'can\'t go on', 'no point', 'better off dead'];
+            const lowMoods = ['sad', 'overwhelmed', 'lonely'];
+            const shouldShowCrisis = lowMoods.includes(entry.mood) && entry.intensity >= 8;
+            const hasKeywords = crisisKeywords.some(keyword => 
+                entry.journal.toLowerCase().includes(keyword)
+            );
+
+            if (shouldShowCrisis || hasKeywords) {
+                document.getElementById('crisisSupport').style.display = 'block';
+            }
+        }
+
+        async function shareInsights() {
+            const shareData = {
+                title: 'Daily Mood & Spiritual Wellness',
+                text: 'I\'m using this helpful mood tracker for spiritual wellness and personal insights.',
+                url: window.location.href
+            };
+
+            try {
+                if (navigator.share) {
+                    await navigator.share(shareData);
+                } else {
+                    // Fallback for browsers without Web Share API
+                    const url = encodeURIComponent(shareData.url);
+                    const text = encodeURIComponent(shareData.text);
+                    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+                }
+            } catch (error) {
+                console.log('Error sharing:', error);
+            }
+        }
+
+        function resetForNewEntry() {
+            // Reset form
+            document.querySelectorAll('.mood-item').forEach(item => {
+                item.classList.remove('selected');
+                item.removeAttribute('aria-selected');
+            });
+            
+            selectedMood = null;
+            document.getElementById('intensityRange').value = 5;
+            document.getElementById('journalEntry').value = '';
+            
+            // Hide insights
+            document.getElementById('insightsSection').classList.remove('show');
+            
+            // Scroll back to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Accessibility functions
+        function toggleDyslexiaFont() {
+            document.body.classList.toggle('dyslexia-friendly');
+            const btn = document.getElementById('dyslexiaBtn');
+            btn.classList.toggle('active');
+            
+            // Save preference
+            localStorage.setItem('dyslexiaFriendly', document.body.classList.contains('dyslexia-friendly'));
+        }
+
+        function toggleHighContrast() {
+            document.body.classList.toggle('high-contrast');
+            const btn = document.getElementById('contrastBtn');
+            btn.classList.toggle('active');
+            
+            // Save preference
+            localStorage.setItem('highContrast', document.body.classList.contains('high-contrast'));
+        }
+
+        function increaseTextSize() {
+            const textSizes = ['Normal', 'Large', 'Extra Large'];
+            const classes = ['', 'large-text', 'extra-large-text'];
+            
+            // Remove current text size class
+            document.body.classList.remove('large-text', 'extra-large-text');
+            
+            // Cycle to next size
+            textSizeLevel = (textSizeLevel + 1) % 3;
+            
+            // Apply new class if not normal
+            if (textSizeLevel > 0) {
+                document.body.classList.add(classes[textSizeLevel]);
+            }
+            
+            // Update button text
+            const btn = document.getElementById('textSizeBtn');
+            btn.textContent = `🔍 Text Size: ${textSizes[textSizeLevel]}`;
+            
+            // Save preference
+            localStorage.setItem('textSizeLevel', textSizeLevel);
+        }
+
+        function loadAccessibilityPreferences() {
+            // Load dyslexia preference
+            if (localStorage.getItem('dyslexiaFriendly') === 'true') {
+                document.body.classList.add('dyslexia-friendly');
+                document.getElementById('dyslexiaBtn').classList.add('active');
+            }
+            
+            // Load contrast preference
+            if (localStorage.getItem('highContrast') === 'true') {
+                document.body.classList.add('high-contrast');
+                document.getElementById('contrastBtn').classList.add('active');
+            }
+            
+            // Load text size preference
+            const savedTextSize = parseInt(localStorage.getItem('textSizeLevel') || '0');
+            textSizeLevel = savedTextSize;
+            const textSizes = ['Normal', 'Large', 'Extra Large'];
+            const classes = ['', 'large-text', 'extra-large-text'];
+            
+            if (textSizeLevel > 0) {
+                document.body.classList.add(classes[textSizeLevel]);
+            }
+            
+            document.getElementById('textSizeBtn').textContent = `🔍 Text Size: ${textSizes[textSizeLevel]}`;
+        }
+
+        // Initialize the app when the page loads
+        document.addEventListener('DOMContentLoaded', initializeMoodTracker);
+    </script>
+</body>
+</html>
